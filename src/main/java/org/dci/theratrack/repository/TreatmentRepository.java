@@ -1,9 +1,10 @@
 package org.dci.theratrack.repository;
 
+import org.dci.theratrack.entity.Treatment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface Treatment extends JpaRepository<Treatment, Integer> {
+public interface TreatmentRepository extends JpaRepository<Treatment, Long> {
 
 }
