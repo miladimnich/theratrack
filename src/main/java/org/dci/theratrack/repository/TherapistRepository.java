@@ -1,9 +1,6 @@
 package org.dci.theratrack.repository;
 
 import org.dci.theratrack.entity.Therapist;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface TherapistRepository extends JpaRepository<Therapist, Long> {
+public interface TherapistRepository extends JpaRepository<Therapist, Long>{
 }
