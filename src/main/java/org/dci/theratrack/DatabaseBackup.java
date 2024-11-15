@@ -16,7 +16,7 @@ public class DatabaseBackup {
   private static final String USER = "postgres";
   private static final String HOST = "localhost";
   private static final int PORT = 5432;
-  private static final String PGPASSWORD = "YOUR_Password"; // Replace with the actual password for PostgreSQL user
+  private static final String PGPASSWORD = "Dci1234!"; // Replace with the actual password for PostgreSQL user
 
 
   public static void main(String[] args) {

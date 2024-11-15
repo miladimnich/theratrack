@@ -30,7 +30,7 @@ public class User {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private UserRole userRole;
+  private UserRole userRole=UserRole.ADMIN; // by default
 
   @Column(nullable = false)
   @Size(min = 8, message = "Password must be at least 8 characters long.")
