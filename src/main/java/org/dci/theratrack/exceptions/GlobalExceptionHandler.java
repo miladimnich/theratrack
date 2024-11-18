@@ -47,6 +47,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
+    Map<String, Object> response = new HashMap<>();
+    response.put("error", "Not Found");
+    response.put("message", ex.getMessage());
+    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(InvalidRequestException.class)
+  public ResponseEntity<Object> handleInvalidRequestException(InvalidRequestException ex) {
+    Map<String, Object> response = new HashMap<>();
+    response.put("error", "Invalid Request");
+    response.put("message", ex.getMessage());
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
   // Handle generic exceptions
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> handleGlobalException(Exception ex) {
