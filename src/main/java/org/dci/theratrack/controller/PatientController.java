@@ -1,6 +1,7 @@
 package org.dci.theratrack.controller;
 
 import org.dci.theratrack.entity.Patient;
+import org.dci.theratrack.request.PatientRequest;
 import org.dci.theratrack.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ public class PatientController {
     private PatientService patientService;
 
     @PostMapping
-    public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
-        return ResponseEntity.ok(patientService.createPatient(patient));
+    public ResponseEntity<Patient> createPatient(@RequestBody PatientRequest request) {
+        return ResponseEntity.ok(patientService.createPatient(request));
     }
 
     @GetMapping
