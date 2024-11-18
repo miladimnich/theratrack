@@ -1,7 +1,6 @@
 package org.dci.theratrack.service;
 
 import org.dci.theratrack.entity.Patient;
-import org.dci.theratrack.entity.Therapist;
 import org.dci.theratrack.entity.User;
 import org.dci.theratrack.enums.UserRole;
 import org.dci.theratrack.exceptions.InvalidRequestException;

@@ -1,5 +1,6 @@
 package org.dci.theratrack.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -72,6 +73,17 @@ public class Therapist {
 
   @OneToOne
   @JoinColumn(name = "user_id", unique = true, referencedColumnName = "id", nullable = false)
+  @JsonBackReference
   private User user;
 
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+    if (user != null) {
+      user.setTherapist(this); // Sync the User entity
+    }
+  }
 }

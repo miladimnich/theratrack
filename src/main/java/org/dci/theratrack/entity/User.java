@@ -1,5 +1,6 @@
 package org.dci.theratrack.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -36,6 +37,15 @@ public class User {
   private UserRole userRole;
 
 
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonManagedReference
+  private Therapist therapist;
+
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonManagedReference
+  private Patient patient;
+
+
   public Long getId() {
     return id;
   }
@@ -67,6 +77,22 @@ public class User {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public Therapist getTherapist() {
+    return therapist;
+  }
+
+  public void setTherapist(Therapist therapist) {
+    this.therapist = therapist;
+  }
+
+  public Patient getPatient() {
+    return patient;
+  }
+
+  public void setPatient(Patient patient) {
+    this.patient = patient;
   }
 
 }
