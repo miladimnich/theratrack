@@ -102,8 +102,7 @@
       <artifactId>modelmapper</artifactId>
       <version>3.1.0</version> <!-- or the latest version -->
     </dependency>
->>>>>>> origin/dev
-  </dependencies>
+   </dependencies>
 
   <build>
     <plugins>
