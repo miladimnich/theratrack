@@ -1,6 +1,8 @@
 package org.dci.theratrack.controller;
 
+import jakarta.validation.Valid;
 import org.dci.theratrack.entity.Therapist;
+import org.dci.theratrack.request.TherapistRequest;
 import org.dci.theratrack.service.TherapistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +18,9 @@ public class TherapistController {
     private TherapistService therapistService;
 
     @PostMapping
-    public ResponseEntity<Therapist> createTherapist(@RequestBody Therapist therapist) {
-        return ResponseEntity.ok(therapistService.createTherapist(therapist));
+    public ResponseEntity<Therapist> createTherapist(@Valid @RequestBody TherapistRequest request) {
+        Therapist createdTherapist = therapistService.createTherapist(request);
+        return ResponseEntity.ok(createdTherapist);
     }
 
     @GetMapping

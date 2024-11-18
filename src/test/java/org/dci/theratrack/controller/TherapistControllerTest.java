@@ -3,6 +3,7 @@ package org.dci.theratrack.controller;
 import org.dci.theratrack.config.TestSecurityConfig;
 import org.dci.theratrack.entity.Therapist;
 import org.dci.theratrack.repository.TherapistRepository;
+import org.dci.theratrack.request.TherapistRequest;
 import org.dci.theratrack.service.TherapistService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,7 +116,7 @@ public class TherapistControllerTest {
         therapist.setName("John");
         therapist.setSurname("Doe");
 
-        when(therapistService.createTherapist(any(Therapist.class))).thenReturn(therapist);
+        when(therapistService.createTherapist(any(TherapistRequest.class))).thenReturn(therapist);
 
         String therapistJson = "{ \"name\": \"John\", \"surname\": \"Doe\" }";
 
@@ -127,7 +128,7 @@ public class TherapistControllerTest {
                 .andExpect(jsonPath("$.name").value("John"))
                 .andExpect(jsonPath("$.surname").value("Doe"));
 
-        verify(therapistService, times(1)).createTherapist(any(Therapist.class));
+        verify(therapistService, times(1)).createTherapist(any(TherapistRequest.class));
     }
 }
 
