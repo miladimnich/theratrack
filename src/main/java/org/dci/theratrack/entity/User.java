@@ -1,15 +1,6 @@
 package org.dci.theratrack.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.TableGenerator;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,12 +18,52 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(unique = true, nullable = false)
+  private String username;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private UserRole userRole;
 
   @Column(nullable = false)
   @Size(min = 8, message = "Password must be at least 8 characters long.")
   private String password;
+
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(nullable = false)
+  private UserRole userRole;
+
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+
+  public @Size(min = 8, message = "Password must be at least 8 characters long.") String getPassword() {
+    return password;
+  }
+
+  public void setPassword(@Size(min = 8, message = "Password must be at least 8 characters long.") String password) {
+    this.password = password;
+  }
+
+  public UserRole getUserRole() {
+    return userRole;
+  }
+
+  public void setUserRole(UserRole userRole) {
+    this.userRole = userRole;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
 }
+
