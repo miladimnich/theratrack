@@ -84,8 +84,8 @@ public class Patient {
   private List<Diagnosis> diagnoses;
 
 
-  @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Appointment appointment;
+  @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Appointment> appointment;
 
   @OneToOne
   @JoinColumn(name = "user_id", unique = true)
