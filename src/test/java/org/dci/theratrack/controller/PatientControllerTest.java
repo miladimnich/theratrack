@@ -14,15 +14,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
-import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ContextConfiguration(classes = {TestSecurityConfig.class, PatientController.class})
-@WebMvcTest(PatientController.class)public class PatientControllerTest {
+@WebMvcTest(PatientController.class)
+public class PatientControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -67,7 +66,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         patient.setName("John");
         patient.setSurname("Doe");
 
-        when(patientService.getPatientById(1L)).thenReturn(Optional.of(patient));
+        when(patientService.getPatientById(1L)).thenReturn(patient);
 
         mockMvc.perform(get("/api/patients/1"))
                 .andExpect(status().isOk())

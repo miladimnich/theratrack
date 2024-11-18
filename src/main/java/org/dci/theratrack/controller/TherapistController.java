@@ -27,9 +27,8 @@ public class TherapistController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Therapist> getTherapistById(@PathVariable Long id) {
-        return therapistService.getTherapistById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Therapist therapist = therapistService.getTherapistById(id);
+        return ResponseEntity.ok(therapist);
     }
 
     @PutMapping("/{id}")

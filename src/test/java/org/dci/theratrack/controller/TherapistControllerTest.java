@@ -1,7 +1,6 @@
 package org.dci.theratrack.controller;
 
 import org.dci.theratrack.config.TestSecurityConfig;
-import org.dci.theratrack.controller.TherapistController;
 import org.dci.theratrack.entity.Therapist;
 import org.dci.theratrack.repository.TherapistRepository;
 import org.dci.theratrack.service.TherapistService;
@@ -15,14 +14,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
-import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ContextConfiguration(classes = {TestSecurityConfig.class, TherapistController.class})
-@WebMvcTest(TherapistController.class)public class TherapistControllerTest {
+@WebMvcTest(TherapistController.class)
+public class TherapistControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -67,7 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         therapist.setName("John");
         therapist.setSurname("Doe");
 
-        when(therapistService.getTherapistById(1L)).thenReturn(Optional.of(therapist));
+        when(therapistService.getTherapistById(1L)).thenReturn(therapist);
 
         mockMvc.perform(get("/api/therapists/1"))
                 .andExpect(status().isOk())
