@@ -1,16 +1,17 @@
 package org.dci.theratrack.service;
 
 import org.dci.theratrack.entity.Patient;
-import org.dci.theratrack.entity.Therapist;
+import org.dci.theratrack.entity.User;
+import org.dci.theratrack.enums.UserRole;
 import org.dci.theratrack.exceptions.InvalidRequestException;
 import org.dci.theratrack.exceptions.ResourceNotFoundException;
 import org.dci.theratrack.repository.PatientRepository;
+import org.dci.theratrack.request.PatientRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PatientService {
@@ -19,20 +20,27 @@ public class PatientService {
     private PatientRepository patientRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
 
     /**
      * Creates a new patient.
      *
-     * @param patient the patient to create
+     * @param request the patient to create
      * @return the created patient
      * @throws InvalidRequestException if the patient is null
      */
-    public Patient createPatient(Patient patient) {
+    public Patient createPatient(PatientRequest request) {
+        Patient patient = request.getPatient();
         if (patient == null) {
             throw new InvalidRequestException("Patient cannot be null.");
         }
+        User user = userService.createUser(request.getUser(), UserRole.PATIENT);
+        // Link the therapist to the user
+        patient.setUser(user);
         return patientRepository.save(patient);
     }
 

@@ -1,5 +1,6 @@
 package org.dci.theratrack.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,9 +19,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.util.HashSet;
+
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,11 +49,11 @@ public class Therapist {
   private String surname;
 
   @Email
-  @Column(nullable = false, unique = true)
+  @Column(nullable = true, unique = true)
   private String email;
 
   @Pattern(regexp = "^\\+?[0-9]{10,15}$")
-  @Column(nullable = false, length = 15)
+  @Column(nullable = true, length = 15)
   private String phone;
 
   @NotNull
@@ -60,8 +61,8 @@ public class Therapist {
   private String gender = "Not specified"; // Default value if not set
 
   @Past
-  @Column(nullable = false)
-  private String birthDate;
+  @Column(nullable = true)
+  private LocalDate birthDate;
 
   @ManyToMany(mappedBy = "therapists")
   private List<Patient> patients;
@@ -71,7 +72,18 @@ public class Therapist {
 
 
   @OneToOne
-  @JoinColumn(name = "user_id", unique = true)
+  @JoinColumn(name = "user_id", unique = true, referencedColumnName = "id", nullable = false)
+  @JsonBackReference
   private User user;
 
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+    if (user != null) {
+      user.setTherapist(this); // Sync the User entity
+    }
+  }
 }
