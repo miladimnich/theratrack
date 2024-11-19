@@ -13,34 +13,33 @@ import java.util.List;
 @RequestMapping("/api/patients")
 public class PatientController {
 
-    @Autowired
-    private PatientService patientService;
+  @Autowired
+  private PatientService patientService;
 
-    @PostMapping
-    public ResponseEntity<Patient> createPatient(@RequestBody PatientRequest request) {
-        return ResponseEntity.ok(patientService.createPatient(request));
-    }
+  @PostMapping
+  public ResponseEntity<Patient> createPatient(@RequestBody PatientRequest request) {
+    return ResponseEntity.ok(patientService.createPatient(request));
+  }
 
-    @GetMapping
-    public List<Patient> getAllPatients() {
-        return patientService.getAllPatients();
-    }
+  @GetMapping
+  public List<Patient> getAllPatients() {
+    return patientService.getAllPatients();
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
-        Patient therapist = patientService.getPatientById(id);
-        return ResponseEntity.ok(therapist);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
+    Patient therapist = patientService.getPatientById(id);
+    return ResponseEntity.ok(therapist);
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient updatedPatient) {
-        return ResponseEntity.ok(patientService.updatePatient(id, updatedPatient));
-    }
+  @PutMapping("/{id}")
+  public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient updatedPatient) {
+    return ResponseEntity.ok(patientService.updatePatient(id, updatedPatient));
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
-        patientService.deletePatient(id);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
+    patientService.deletePatient(id);
+    return ResponseEntity.noContent().build();
+  }
 }
-

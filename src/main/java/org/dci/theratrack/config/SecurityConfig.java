@@ -1,5 +1,6 @@
 package org.dci.theratrack.config;
 
+
 import org.dci.theratrack.enums.UserRole;
 import org.dci.theratrack.filter.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
@@ -25,3 +26,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+ 
