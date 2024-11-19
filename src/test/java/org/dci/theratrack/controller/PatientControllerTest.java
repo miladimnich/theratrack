@@ -3,6 +3,7 @@ package org.dci.theratrack.controller;
 import org.dci.theratrack.config.TestSecurityConfig;
 import org.dci.theratrack.entity.Patient;
 import org.dci.theratrack.repository.PatientRepository;
+import org.dci.theratrack.request.PatientRequest;
 import org.dci.theratrack.service.PatientService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,15 +15,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
-import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ContextConfiguration(classes = {TestSecurityConfig.class, PatientController.class})
-@WebMvcTest(PatientController.class)public class PatientControllerTest {
+@WebMvcTest(PatientController.class)
+public class PatientControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -67,7 +67,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         patient.setName("John");
         patient.setSurname("Doe");
 
-        when(patientService.getPatientById(1L)).thenReturn(Optional.of(patient));
+        when(patientService.getPatientById(1L)).thenReturn(patient);
 
         mockMvc.perform(get("/api/patients/1"))
                 .andExpect(status().isOk())
@@ -117,9 +117,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         patient.setName("John");
         patient.setSurname("Doe");
 
-        when(patientService.createPatient(any(Patient.class))).thenReturn(patient);
+      when(patientService.createPatient(any(PatientRequest.class))).thenReturn(patient);
 
-        String patientJson = "{ \"name\": \"John\", \"surname\": \"Doe\" }";
+
+      String patientJson = "{ \"name\": \"John\", \"surname\": \"Doe\" }";
 
         mockMvc.perform(post("/api/patients")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -129,7 +130,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 .andExpect(jsonPath("$.name").value("John"))
                 .andExpect(jsonPath("$.surname").value("Doe"));
 
-        verify(patientService, times(1)).createPatient(any(Patient.class));
+        verify(patientService, times(1)).createPatient(any(PatientRequest.class));
     }
 }
 

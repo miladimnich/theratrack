@@ -19,6 +19,7 @@ public class SecurityConfig {
             .requestMatchers("/api/auth/**").permitAll()
             .requestMatchers("/api/patients/**").hasRole(UserRole.ADMIN.name())
             .requestMatchers("/api/therapists/**").hasRole(UserRole.ADMIN.name())
+            .requestMatchers("/api/users/**").hasRole(UserRole.ADMIN.name())
             .anyRequest().authenticated()
         ).addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
             .httpBasic(httpBasic -> {});
