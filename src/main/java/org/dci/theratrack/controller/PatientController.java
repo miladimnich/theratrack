@@ -12,35 +12,34 @@ import java.util.List;
 @RequestMapping("/api/patients")
 public class PatientController {
 
-    @Autowired
-    private PatientService patientService;
+  @Autowired
+  private PatientService patientService;
 
-    @PostMapping
-    public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
-        return ResponseEntity.ok(patientService.createPatient(patient));
-    }
+  @PostMapping
+  public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
+    return ResponseEntity.ok(patientService.createPatient(patient));
+  }
 
-    @GetMapping
-    public List<Patient> getAllPatients() {
-        return patientService.getAllPatients();
-    }
+  @GetMapping
+  public List<Patient> getAllPatients() {
+    return patientService.getAllPatients();
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
-        return patientService.getPatientById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
+    return patientService.getPatientById(id)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient updatedPatient) {
-        return ResponseEntity.ok(patientService.updatePatient(id, updatedPatient));
-    }
+  @PutMapping("/{id}")
+  public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient updatedPatient) {
+    return ResponseEntity.ok(patientService.updatePatient(id, updatedPatient));
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
-        patientService.deletePatient(id);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
+    patientService.deletePatient(id);
+    return ResponseEntity.noContent().build();
+  }
 }
-
