@@ -1,12 +1,16 @@
 package org.dci.theratrack.service;
 
-import jakarta.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Patient;
 import org.dci.theratrack.exceptions.InvalidRequestException;
 import org.dci.theratrack.exceptions.ResourceNotFoundException;
 import org.dci.theratrack.repository.AppointmentRepository;
+import org.dci.theratrack.request.AppointmentDTO;
+import org.dci.theratrack.request.TherapySessionHistoryDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,9 @@ public class AppointmentService {
 
   @Autowired
   private AppointmentRepository appointmentRepository;
+
+  @Autowired
+  private ModelMapper modelMapper;
 
   /**
    * Creates a new appointment.
@@ -44,6 +51,9 @@ public class AppointmentService {
   public List<Appointment> getAllAppointments() {
     return appointmentRepository.findAll();
   }
+
+
+
 
   /**
    * Retrieves appointments for a specific patient.
@@ -93,12 +103,23 @@ public class AppointmentService {
   }
 
 
+  public List<TherapySessionHistoryDTO> getTherapySessionHistory(Long patientId) {
+    List<Appointment> appointments = appointmentRepository.getAppointmentsByPatientId(patientId);
+
+    if (appointments.isEmpty()) {
+      throw new ResourceNotFoundException("No therapy sessions found for the patient with ID: " + patientId);
+    }
+
+    return appointments.stream()
+        .map(appointment -> modelMapper.map(appointment, TherapySessionHistoryDTO.class))
+        .collect(Collectors.toList());
+  }
+
   public void updateSessionDetails(Long appointmentId, String additionalNotes) {
     Appointment appointment = appointmentRepository.findById(appointmentId)
-        .orElseThrow(() -> new RuntimeException("Appointment not found"));
-
-    appointment.setNotes(additionalNotes);
+        .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with ID: " + appointmentId));
 
     appointmentRepository.save(appointment);
   }
+
 }
