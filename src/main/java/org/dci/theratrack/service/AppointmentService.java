@@ -1,5 +1,6 @@
 package org.dci.theratrack.service;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
 import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Patient;
@@ -89,5 +90,15 @@ public class AppointmentService {
       throw new ResourceNotFoundException("Appointment not found with ID: " + appointmentId);
     }
     appointmentRepository.deleteById(appointmentId);
+  }
+
+
+  public void updateSessionDetails(Long appointmentId, String additionalNotes) {
+    Appointment appointment = appointmentRepository.findById(appointmentId)
+        .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+    appointment.setNotes(additionalNotes);
+
+    appointmentRepository.save(appointment);
   }
 }
