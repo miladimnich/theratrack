@@ -1,11 +1,13 @@
 package org.dci.theratrack.controller;
 
-import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Patient;
+import org.dci.theratrack.request.AppointmentDTO;
 import org.dci.theratrack.request.PatientRequest;
+import org.dci.theratrack.request.TherapySessionHistoryDTO;
 import org.dci.theratrack.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +36,8 @@ public class PatientController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient updatedPatient) {
+  public ResponseEntity<Patient> updatePatient(@PathVariable Long id,
+      @RequestBody Patient updatedPatient) {
     return ResponseEntity.ok(patientService.updatePatient(id, updatedPatient));
   }
 
@@ -43,16 +46,6 @@ public class PatientController {
     patientService.deletePatient(id);
     return ResponseEntity.noContent().build();
   }
-
-  @GetMapping("/{patientId}/therapy-history")
-  public ResponseEntity<List<Appointment>> getPatientTherapyHistory(@PathVariable Long patientId) {
-    List<Appointment> therapyHistory = patientService.getPatientTherapyHistory(patientId);
-    if (therapyHistory.isEmpty()) {
-      return ResponseEntity.notFound().build();  // Returns 404 if no therapy history is found
-    }
-    return ResponseEntity.ok(therapyHistory);  // Returns 200 OK if therapy history is found
-  }
-
-
-
 }
+
+
