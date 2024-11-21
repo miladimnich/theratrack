@@ -36,8 +36,8 @@ public class Appointment {
   private Long id;
 
   @NotNull(message = "Date and time cannot be null")
-  @Column(nullable = false)
-  private String dateTime;
+  @Column(nullable = false, name = "date_time")
+  private LocalDateTime dateTime;
 
   @NotNull(message = "Duration cannot be null")
   @Min(1)  // Session duration must be positive
@@ -59,9 +59,15 @@ public class Appointment {
   @JoinColumn(name = "patient_id", nullable = false)
   private Patient patient;
 
-  @FutureOrPresent(message = "Appointment date must be in the future or present")
-  @Column(nullable = false)
-  private LocalDateTime appointmentDate;
+  @Column(length = 2000)
+  private String additionalNotes;
+
+  public void setNotes(String notes) {
+    this.additionalNotes = notes;
+  }
+
+
+
 
 
 }

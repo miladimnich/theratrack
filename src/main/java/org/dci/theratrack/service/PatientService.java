@@ -1,10 +1,13 @@
 package org.dci.theratrack.service;
 
+import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Patient;
+import org.dci.theratrack.entity.Treatment;
 import org.dci.theratrack.entity.User;
 import org.dci.theratrack.enums.UserRole;
 import org.dci.theratrack.exceptions.InvalidRequestException;
 import org.dci.theratrack.exceptions.ResourceNotFoundException;
+import org.dci.theratrack.repository.AppointmentRepository;
 import org.dci.theratrack.repository.PatientRepository;
 import org.dci.theratrack.request.PatientRequest;
 import org.modelmapper.ModelMapper;
@@ -24,6 +27,9 @@ public class PatientService {
 
   @Autowired
   private ModelMapper modelMapper;
+
+  @Autowired
+  private AppointmentRepository appointmentRepository;
 
 
   /**
@@ -63,11 +69,11 @@ public class PatientService {
   /**
    * Updates an existing patient.
    *
-   * @param id the ID of the patient to update
+   * @param id             the ID of the patient to update
    * @param updatedPatient the updated patient data
    * @return the updated patient
    * @throws ResourceNotFoundException if the patient is not found
-   * @throws InvalidRequestException if the updated patient is null
+   * @throws InvalidRequestException   if the updated patient is null
    */
   public Patient updatePatient(Long id, Patient updatedPatient) {
     if (updatedPatient == null) {
@@ -77,7 +83,8 @@ public class PatientService {
     Patient existingPatient = patientRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
 
-    modelMapper.typeMap(Patient.class, Patient.class).addMappings(mapper -> mapper.skip(Patient::setId));
+    modelMapper.typeMap(Patient.class, Patient.class)
+        .addMappings(mapper -> mapper.skip(Patient::setId));
     modelMapper.map(updatedPatient, existingPatient);
 
     return patientRepository.save(existingPatient);
@@ -94,5 +101,27 @@ public class PatientService {
       throw new ResourceNotFoundException("Patient not found with ID: " + id);
     }
     patientRepository.deleteById(id);
+  }
+
+  public List<Appointment> getPatientTherapyHistory(Long patientId) {
+    Patient patient = patientRepository.findById(patientId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("Patient not found with ID: " + patientId));
+
+    List<Appointment> appointments = patient.getAppointment();
+
+    appointments.forEach(appointment -> {
+      List<Treatment> treatments = appointment.getTreatments();
+      if (treatments != null && !treatments.isEmpty()) {
+        treatments.forEach(treatment -> {
+
+          System.out.println("Treatment name: " + treatment.getName());
+          System.out.println("Duration: " + treatment.getDuration());
+          System.out.println("Difficulty Level: " + treatment.getDifficultyLevel());
+        });
+      }
+    });
+
+    return appointments;
   }
 }
