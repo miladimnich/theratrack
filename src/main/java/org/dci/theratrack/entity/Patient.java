@@ -1,6 +1,7 @@
 package org.dci.theratrack.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,6 +36,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "patients",
     uniqueConstraints = @UniqueConstraint(columnNames = {"email", "phone"}))
 //ensures that the combination of email and phone is unique
+
 public class Patient {
 
   @Id
@@ -86,12 +88,15 @@ public class Patient {
 
 
   @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonBackReference
   private List<Appointment> appointment;
 
   @OneToOne
   @JoinColumn(name = "user_id", unique = true)
   @JsonBackReference
   private User user;
+
+
 
   public User getUser() {
     return user;
