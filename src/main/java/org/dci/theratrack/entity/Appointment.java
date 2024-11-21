@@ -64,7 +64,12 @@ public class Appointment {
   @JsonManagedReference
   private Patient patient;
 
+  @Column(length = 2000)
+  private String additionalNotes;
 
+  public void setNotes(String notes) {
+    this.additionalNotes = notes;
+  }
 
 
 
