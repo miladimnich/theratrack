@@ -1,5 +1,7 @@
 package org.dci.theratrack.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,22 +51,20 @@ public class Appointment {
   private AppointmentStatus status;
 
   @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonManagedReference // Avoid infinite recursion during serialization
   private List<Treatment> treatments;
 
   @ManyToOne
   @JoinColumn(name = "therapist_id", nullable = false)
+  @JsonBackReference // Prevents serialization of therapist back to appointments
   private Therapist therapist;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "patient_id", nullable = false)
+  @JsonManagedReference
   private Patient patient;
 
-  @Column(length = 2000)
-  private String additionalNotes;
 
-  public void setNotes(String notes) {
-    this.additionalNotes = notes;
-  }
 
 
 
