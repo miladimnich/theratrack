@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Patient;
 import org.dci.theratrack.entity.Therapist;
@@ -41,17 +42,23 @@ public class AppointmentServiceTest {
   void setUp() {
     appointment = new Appointment();
     appointment.setId(1L);
-    appointment.setDateTime("2023-12-01T10:00:00");
+    appointment.setDateTime(LocalDateTime.of(2023, 12, 1, 10, 0)); // Correct LocalDateTime format
     appointment.setSessionDuration(60);
     appointment.setStatus(AppointmentStatus.PENDING);
 
+    // Initialize the Patient object
     patient = new Patient();
     patient.setId(1L);
     patient.setName("John Doe");
 
+    // Initialize the Therapist object
+    therapist = new Therapist();
+    therapist.setId(1L);
+    therapist.setName("Jane Smith");
+
+    // Assign Therapist and Patient to the appointment
     appointment.setTherapist(therapist);
     appointment.setPatient(patient);
-    appointment.setAppointmentDate(LocalDateTime.now().plusDays(1));
   }
 
   @Test
@@ -92,13 +99,19 @@ public class AppointmentServiceTest {
 
   @Test
   void testGetAppointment() {
-    when(appointmentRepository.getReferenceById(1L)).thenReturn(appointment);
+     when(appointmentRepository.findById(1L)).thenReturn(Optional.of(appointment));
 
-    Appointment result = appointmentService.getAppointment(1L);
+     Appointment result = appointmentService.getAppointment(1L);
 
-    assertNotNull(result);
-    assertEquals(appointment.getId(), result.getId());
-    verify(appointmentRepository, times(1)).getReferenceById(1L);
+     assertNotNull(result, "The appointment should not be null");
+    assertEquals(appointment.getId(), result.getId(), "The appointment ID should match");
+    assertEquals(appointment.getDateTime(), result.getDateTime(), "The appointment dateTime should match");
+    assertEquals(appointment.getSessionDuration(), result.getSessionDuration(), "The appointment duration should match");
+    assertEquals(appointment.getStatus(), result.getStatus(), "The appointment status should match");
+    assertEquals(appointment.getPatient().getId(), result.getPatient().getId(), "The appointment patient should match");
+    assertEquals(appointment.getTherapist().getId(), result.getTherapist().getId(), "The appointment therapist should match");
+
+     verify(appointmentRepository, times(1)).findById(1L);
   }
 
   @Test
@@ -115,7 +128,7 @@ public class AppointmentServiceTest {
   }
 
   @Test
-  void testGetAppointmentsByPatientNoAppointments(){
+  void testGetAppointmentsByPatientNoAppointments() {
     when(appointmentRepository.getAppointmentsByPatientId(1L)).thenReturn(Collections.emptyList());
 
     List<Appointment> result = appointmentService.getAppointmentsByPatient(patient);
@@ -126,24 +139,32 @@ public class AppointmentServiceTest {
   }
 
   @Test
-  void testUpdateAppointment(){
-    appointment.setSessionDuration(90);
-
+  void testUpdateAppointment() {
+    appointment.setSessionDuration(90); // Change session duration
+    when(appointmentRepository.existsById(appointment.getId())).thenReturn(true);
     when(appointmentRepository.save(appointment)).thenReturn(appointment);
 
     Appointment result = appointmentService.updateAppointment(appointment);
 
     assertNotNull(result);
     assertEquals(90, result.getSessionDuration());
-    verify(appointmentRepository, times(1)).save(appointment);
+    verify(appointmentRepository, times(1)).existsById(
+        appointment.getId());  // Verify existsById was called
+    verify(appointmentRepository, times(1)).save(appointment);  // Verify save was called
   }
+
 
   @Test
   void testDeleteAppointment() {
-    doNothing().when(appointmentRepository).deleteById(1L);
+    Long appointmentId = 1L;
 
-    appointmentService.deleteAppointment(1L);
+    when(appointmentRepository.existsById(appointmentId)).thenReturn(true);
+    doNothing().when(appointmentRepository).deleteById(appointmentId);
 
-    verify(appointmentRepository, times(1)).deleteById(1L);
+    appointmentService.deleteAppointment(appointmentId);
+
+    verify(appointmentRepository, times(1)).existsById(appointmentId);
+    verify(appointmentRepository, times(1)).deleteById(appointmentId);
   }
+
 }
