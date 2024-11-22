@@ -115,9 +115,9 @@ public class AppointmentController {
   }
 
   @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_THERAPIST')")
-  @PutMapping("/{id}/notes")
+  @PutMapping("/{appointment_id}/notes")
   public ResponseEntity<String> updateSessionDetails(
-      @PathVariable Long id,
+      @PathVariable ("appointment_id") Long id,
       @RequestBody AppointmentDTO appointmentDTO) {
     if (appointmentDTO.getNotes() == null || appointmentDTO.getNotes().length() > 2000) {
       return ResponseEntity.badRequest().body("Notes must be non-null and under 2000 characters.");
