@@ -1,8 +1,8 @@
 package org.dci.theratrack.service;
 
+import java.util.stream.Collectors;
 import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Patient;
-import org.dci.theratrack.entity.Treatment;
 import org.dci.theratrack.entity.User;
 import org.dci.theratrack.enums.UserRole;
 import org.dci.theratrack.exceptions.InvalidRequestException;
@@ -10,6 +10,7 @@ import org.dci.theratrack.exceptions.ResourceNotFoundException;
 import org.dci.theratrack.repository.AppointmentRepository;
 import org.dci.theratrack.repository.PatientRepository;
 import org.dci.theratrack.request.PatientRequest;
+import org.dci.theratrack.request.TherapySessionHistoryRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -103,25 +104,13 @@ public class PatientService {
     patientRepository.deleteById(id);
   }
 
-  public List<Appointment> getPatientTherapyHistory(Long patientId) {
-    Patient patient = patientRepository.findById(patientId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Patient not found with ID: " + patientId));
 
-    List<Appointment> appointments = patient.getAppointment();
+  public List<TherapySessionHistoryRequest> getTherapySessionHistory(Long patientId) {
+    List<Appointment> appointments = appointmentRepository.getAppointmentsByPatientId(patientId);
 
-    appointments.forEach(appointment -> {
-      List<Treatment> treatments = appointment.getTreatments();
-      if (treatments != null && !treatments.isEmpty()) {
-        treatments.forEach(treatment -> {
-
-          System.out.println("Treatment name: " + treatment.getName());
-          System.out.println("Duration: " + treatment.getDuration());
-          System.out.println("Difficulty Level: " + treatment.getDifficultyLevel());
-        });
-      }
-    });
-
-    return appointments;
+    return appointments.stream()
+        .map(appointment -> modelMapper.map(appointment, TherapySessionHistoryRequest.class))
+        .collect(Collectors.toList());
   }
+
 }
