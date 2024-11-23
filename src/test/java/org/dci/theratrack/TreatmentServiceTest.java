@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.dci.theratrack.entity.Treatment;
 import org.dci.theratrack.repository.TreatmentRepository;
 import org.dci.theratrack.service.TreatmentService;
@@ -72,19 +73,20 @@ public class TreatmentServiceTest {
 
   @Test
   void testGetTreatment() {
-    when(treatmentRepository.getReferenceById(1L)).thenReturn(treatment);
+    when(treatmentRepository.findById(1L)).thenReturn(Optional.of(treatment));
 
     Treatment result = treatmentService.getTreatment(1L);
 
     assertNotNull(result);
     assertEquals(treatment.getId(), result.getId());
-    verify(treatmentRepository, times(1)).getReferenceById(1L);
+    verify(treatmentRepository, times(1)).findById(1L);
   }
 
   @Test
   void testUpdateTreatment() {
     treatment.setDescription("Updated description");
 
+    when(treatmentRepository.existsById(treatment.getId())).thenReturn(true);
     when(treatmentRepository.save(treatment)).thenReturn(treatment);
 
     Treatment result = treatmentService.updateTreatment(treatment);
@@ -96,6 +98,8 @@ public class TreatmentServiceTest {
 
   @Test
   void testdeleteTreatment() {
+    when(treatmentRepository.existsById(1L)).thenReturn(true);
+
     doNothing().when(treatmentRepository).deleteById(1L);
 
     treatmentService.deleteTreatment(1L);
