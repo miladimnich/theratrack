@@ -69,7 +69,6 @@ public class Therapist {
   private List<Patient> patients;
 
   @OneToMany(mappedBy = "therapist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JsonManagedReference // Prevents infinite recursion from therapist to appointments
   private List<Appointment> appointments;
 
 
