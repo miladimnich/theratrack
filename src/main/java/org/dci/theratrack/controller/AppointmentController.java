@@ -1,26 +1,18 @@
 package org.dci.theratrack.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import org.dci.theratrack.entity.Appointment;
-import org.dci.theratrack.entity.Patient;
 import org.dci.theratrack.entity.Treatment;
-import org.dci.theratrack.enums.AppointmentStatus;
-import org.dci.theratrack.enums.DifficultyLevel;
 import org.dci.theratrack.exceptions.ResourceNotFoundException;
-import org.dci.theratrack.request.AppointmentDTO;
-import org.dci.theratrack.request.TherapySessionHistoryDTO;
-import org.dci.theratrack.request.TreatmentDTO;
+import org.dci.theratrack.request.AppointmentRequest;
 import org.dci.theratrack.service.AppointmentService;
 import org.dci.theratrack.service.PatientService;
 import org.dci.theratrack.service.TreatmentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,95 +34,76 @@ public class AppointmentController {
   @Autowired
   PatientService patientService;
 
+  @Autowired
+  private TreatmentService treatmentService;
+
   @PostMapping
-  public ResponseEntity<?> createAppointment(@RequestBody AppointmentDTO appointmentRequest) {
-    Long patientId = appointmentRequest.getPatientId();
-    Patient patient = patientService.getPatientById(patientId);
-    if (patient == null) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body("Patient not found with ID: " + patientId);
+  public ResponseEntity<Appointment> createAppointment(@RequestBody AppointmentRequest request) {
+    System.out.println("Received request: " + request);
+    return ResponseEntity.ok(appointmentService.createAppointment(request));
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<Appointment> getAppointmentById(@PathVariable Long id) {
+    Appointment appointment = appointmentService.getAppointment(id);
+    return ResponseEntity.ok(appointment);
+  }
+
+  @GetMapping("/patient/{patientId}")
+  public ResponseEntity<List<Appointment>> getAppointmentsByPatientId(
+      @PathVariable Long patientId) {
+    List<Appointment> appointments = appointmentService.getAppointmentsByPatientId(patientId);
+    if (appointments.isEmpty()) {
+      throw new ResourceNotFoundException(
+          "No appointments found for patient with ID: " + patientId);
     }
+    return ResponseEntity.ok(appointments);
+  }
 
-    Appointment appointment = modelMapper.map(appointmentRequest, Appointment.class);
-    appointment.setPatient(patient);
+  @GetMapping
+  public List<Appointment> getAllAppointments() {
+    return appointmentService.getAllAppointments();
+  }
 
-    Appointment createdAppointment = appointmentService.createAppointment(appointment);
+  @PutMapping("/{appointmentId}")
+  public ResponseEntity<Appointment> updateAppointment(@PathVariable Long appointmentId,
+      @RequestBody Appointment updatedAppointment) {
+    return ResponseEntity.ok(
+        appointmentService.updateAppointment(appointmentId, updatedAppointment));
 
-    // Convert the created appointment to a DTO and return the response
-    AppointmentDTO appointmentDTO = modelMapper.map(createdAppointment, AppointmentDTO.class);
-    return ResponseEntity.status(HttpStatus.CREATED).body(appointmentDTO);
+  }
+
+  @DeleteMapping("/{appointmentId}")
+  public ResponseEntity<Void> deleteAppointment(@PathVariable Long appointmentId) {
+    appointmentService.deleteAppointment(appointmentId);
+    return ResponseEntity.noContent().build();
   }
 
   @PutMapping("/{appointmentId}/treatments")
-  public ResponseEntity<?> addTreatmentDetail(@PathVariable Long appointmentId,
-      @RequestBody TreatmentDTO treatmentDTO) {
-    Appointment appointment = appointmentService.getAppointment(appointmentId);
+  public ResponseEntity<Treatment> addTreatmentDetail(
+      @PathVariable Long appointmentId,
+      @RequestBody Treatment treatmentRequest) {
 
-    if (appointment == null) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body("Appointment not found with ID: " + appointmentId);
-    }
+    Treatment savedTreatment = appointmentService.addTreatmentToAppointment(appointmentId,
+        treatmentRequest);
 
-    DifficultyLevel difficultyLevel = treatmentDTO.getDifficultyLevel();
-    if (difficultyLevel == null) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body("Difficulty level is missing in the treatment details.");
-    }
-
-    // Map TreatmentDTO to Treatment entity
-    Treatment treatment = modelMapper.map(treatmentDTO, Treatment.class);
-    treatment.setDifficultyLevel(difficultyLevel);
-    treatment.setAppointment(appointment);
-
-    treatment.setNotes(treatmentDTO.getNotes());
-
-    appointment.getTreatments().add(treatment);
-
-    appointmentService.updateAppointment(appointment);
-
-    return ResponseEntity.status(HttpStatus.OK)
-        .body("Treatment details added successfully.");
+    return ResponseEntity.ok(savedTreatment);
   }
 
 
-  @GetMapping
-  public ResponseEntity<List<AppointmentDTO>> getAllAppointments() {
-    List<Appointment> appointments = appointmentService.getAllAppointments();
-    List<AppointmentDTO> appointmentDTOs = appointments.stream()
-        .map(appointment -> modelMapper.map(appointment, AppointmentDTO.class))
-        .collect(Collectors.toList());
-    return ResponseEntity.ok(appointmentDTOs);
-  }
-
-
-  @PreAuthorize("hasRole('ROLE_PATIENT')")
-  @GetMapping("/history/{patientId}")
-  public ResponseEntity<List<TherapySessionHistoryDTO>> getTherapySessionHistory(
-      @PathVariable Long patientId) {
-    List<TherapySessionHistoryDTO> history = appointmentService.getTherapySessionHistory(patientId);
-    if (history.isEmpty()) {
-      return ResponseEntity.noContent().build(); // Returns 204 No Content
-    }
-    return ResponseEntity.ok(history);
-  }
-
-  @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_THERAPIST')")
   @PutMapping("/{appointment_id}/notes")
-  public ResponseEntity<String> updateSessionDetails(
-      @PathVariable ("appointment_id") Long id,
-      @RequestBody AppointmentDTO appointmentDTO) {
-    if (appointmentDTO.getNotes() == null || appointmentDTO.getNotes().length() > 2000) {
-      return ResponseEntity.badRequest().body("Notes must be non-null and under 2000 characters.");
+  public ResponseEntity<Appointment> updateAppointmentNotes(
+      @PathVariable("appointment_id") Long appointmentId,
+      @RequestBody Map<String, String> requestBody) {
+
+    String updatedNotes = requestBody.get("notes");
+    if (updatedNotes == null || updatedNotes.trim().isEmpty()) {
+      return ResponseEntity.badRequest().body(null);
     }
 
-    try {
-      appointmentService.updateSessionDetails(id, appointmentDTO.getNotes());
-
-      return ResponseEntity.ok("Session details updated successfully.");
-    } catch (RuntimeException ex) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body("Appointment not found: " + ex.getMessage());
-    }
-
+    Appointment updatedAppointment = appointmentService.updateAppointmentNotes(appointmentId,
+        updatedNotes);
+    return ResponseEntity.ok(updatedAppointment);
   }
+
 }
