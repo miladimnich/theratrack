@@ -88,7 +88,6 @@ public class Patient {
 
 
   @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JsonBackReference
   private List<Appointment> appointment;
 
   @OneToOne
