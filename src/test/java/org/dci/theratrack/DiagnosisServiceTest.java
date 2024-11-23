@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.dci.theratrack.entity.Diagnosis;
 import org.dci.theratrack.repository.DiagnosisRepository;
 import org.dci.theratrack.service.DiagnosisService;
@@ -42,15 +43,19 @@ public class DiagnosisServiceTest {
 
   @Test
   void testGetDiagnosis() {
-    when(diagnosisRepository.getReferenceById(1L)).thenReturn(diagnosis);
+    when(diagnosisRepository.findById(1L)).thenReturn(Optional.of(diagnosis));
 
     Diagnosis result = diagnosisService.getDiagnosis(1L);
 
-    assertNotNull(result);
-    assertEquals(diagnosis.getId(), result.getId());
-    assertEquals(diagnosis.getName(), result.getName());
-    verify(diagnosisRepository, times(1)).getReferenceById(1L);
-  }
+    // Then: Verify the result is not null and matches the expected diagnosis
+    assertNotNull(result, "The diagnosis should not be null");
+    assertEquals(diagnosis.getId(), result.getId(), "The diagnosis ID should match");
+    assertEquals(diagnosis.getName(), result.getName(), "The diagnosis name should match");
+    assertEquals(diagnosis.getDescription(), result.getDescription(), "The diagnosis description should match");
+
+    // Verify that the repository's findById method was called once with the correct ID
+    verify(diagnosisRepository, times(1)).findById(1L);
+   }
 
   @Test
   void testGetDiagnoses() {
@@ -92,6 +97,7 @@ public class DiagnosisServiceTest {
   @Test
   void testUpdateDiagnosis() {
     diagnosis.setName("Updated Diagnosis");
+    when(diagnosisRepository.existsById(diagnosis.getId())).thenReturn(true);
 
     when(diagnosisRepository.save(diagnosis)).thenReturn(diagnosis);
 
@@ -104,10 +110,14 @@ public class DiagnosisServiceTest {
 
   @Test
   void testDeleteDiagnosis() {
-    doNothing().when(diagnosisRepository).deleteById(1L);
+    when(diagnosisRepository.existsById(1L)).thenReturn(true);
+    doNothing().when(diagnosisRepository).deleteById(1L); // Mock deleteById to do nothing
 
+    // Call the deleteDiagnosis method
     diagnosisService.deleteDiagnosis(1L);
 
+    // Verify that deleteById was called once with the correct argument (1L)
     verify(diagnosisRepository, times(1)).deleteById(1L);
+
   }
 }
