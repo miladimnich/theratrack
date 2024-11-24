@@ -2,6 +2,7 @@ package org.dci.theratrack.service;
 
 import java.util.stream.Collectors;
 import org.dci.theratrack.entity.Appointment;
+import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Patient;
 import org.dci.theratrack.entity.User;
 import org.dci.theratrack.enums.UserRole;

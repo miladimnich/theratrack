@@ -78,6 +78,9 @@ public class AppointmentService {
    * @throws ResourceNotFoundException if the appointment is not found
    */
   public Appointment getAppointment(Long appointmentId) {
+    if (appointmentId == null) {
+      throw new InvalidRequestException("Appointment id cannot be null.");
+    }
     return appointmentRepository.findById(appointmentId)
         .orElseThrow(
             () -> new ResourceNotFoundException("Appointment not found with ID: " + appointmentId));
@@ -152,6 +155,10 @@ public class AppointmentService {
    * @throws ResourceNotFoundException if the appointment is not found
    */
   public void deleteAppointment(Long appointmentId) {
+    if (appointmentId == null) {
+      throw new InvalidRequestException("Appointment ID cannot be null.");
+    }
+
     if (!appointmentRepository.existsById(appointmentId)) {
       throw new ResourceNotFoundException("Appointment not found with ID: " + appointmentId);
     }

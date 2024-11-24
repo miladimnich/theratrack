@@ -1,4 +1,4 @@
-package org.dci.theratrack;
+package org.dci.theratrack.service;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,8 +7,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.dci.theratrack.entity.Treatment;
+import org.dci.theratrack.exceptions.InvalidRequestException;
+import org.dci.theratrack.exceptions.ResourceNotFoundException;
 import org.dci.theratrack.repository.TreatmentRepository;
-import org.dci.theratrack.service.TreatmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -97,13 +98,71 @@ public class TreatmentServiceTest {
   }
 
   @Test
-  void testdeleteTreatment() {
+  void testDeleteTreatment() {
     when(treatmentRepository.existsById(1L)).thenReturn(true);
-
     doNothing().when(treatmentRepository).deleteById(1L);
 
     treatmentService.deleteTreatment(1L);
 
-    verify(treatmentRepository, times(1)).deleteById(1L);  }
+    verify(treatmentRepository, times(1)).deleteById(1L);
+  }
+
+  @Test
+  void shouldThrowResourceNotFoundExceptionWhenTreatmentIdDoesNotExist() {
+    // Given
+    Long nonExistentId = 999L;
+    when(treatmentRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+    // When & Then
+    ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+      treatmentService.getTreatment(nonExistentId);
+    });
+
+    // Assert
+    assertEquals("Treatment not found with ID: " + nonExistentId, exception.getMessage());
+    verify(treatmentRepository, times(1)).findById(nonExistentId);
+  }
+
+  @Test
+  void shouldThrowIllegalArgumentExceptionWhenTreatmentIdIsNull() {
+    // When & Then
+    assertThrows(IllegalArgumentException.class, () -> {
+      treatmentService.getTreatment(null);
+    });
+
+    // Verify no interactions with the repository
+    verifyNoInteractions(treatmentRepository);
+  }
+
+  @Test
+  void shouldThrowInvalidRequestExceptionWhenTreatmentIsNull() {
+    // When & Then
+    InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
+      treatmentService.updateTreatment(null);
+    });
+
+    // Assert
+    assertEquals("Treatment cannot be null.", exception.getMessage());
+
+    // Verify no interactions with the repository
+    verifyNoInteractions(treatmentRepository);
+  }
+
+  @Test
+  void deleteTreatmentShouldThrowResourceNotFoundExceptionWhenTreatmentIdDoesNotExist() {
+    // Given
+    Long nonExistentId = 999L;
+    when(treatmentRepository.existsById(nonExistentId)).thenReturn(false);
+
+    // When & Then
+    ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+      treatmentService.deleteTreatment(nonExistentId);
+    });
+
+    // Assert
+    assertEquals("Treatment not found with ID: " + nonExistentId, exception.getMessage());
+    verify(treatmentRepository, times(1)).existsById(nonExistentId);
+    verify(treatmentRepository, never()).deleteById(nonExistentId);
+  }
 }
 
