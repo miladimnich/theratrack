@@ -5,9 +5,7 @@ import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Patient;
 import org.dci.theratrack.entity.Therapist;
 import org.dci.theratrack.entity.Treatment;
-import org.dci.theratrack.entity.User;
 import org.dci.theratrack.enums.AppointmentStatus;
-import org.dci.theratrack.enums.UserRole;
 import org.dci.theratrack.exceptions.InvalidRequestException;
 import org.dci.theratrack.exceptions.ResourceNotFoundException;
 import org.dci.theratrack.repository.AppointmentRepository;
@@ -15,10 +13,8 @@ import org.dci.theratrack.repository.PatientRepository;
 import org.dci.theratrack.repository.TherapistRepository;
 import org.dci.theratrack.repository.TreatmentRepository;
 import org.dci.theratrack.request.AppointmentRequest;
-import org.dci.theratrack.request.PatientRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -119,8 +115,10 @@ public class AppointmentService {
         .orElseThrow(
             () -> new ResourceNotFoundException("Appointment not found with ID: " + appointmentId));
 
-    // Configure ModelMapper to skip the ID field
-    modelMapper.typeMap(Appointment.class, Appointment.class)
+    modelMapper = new ModelMapper(); // Manual initialization, why its not initialised based on AppConfig?
+
+// Configure ModelMapper to skip the ID field
+    modelMapper.createTypeMap(Appointment.class, Appointment.class)
         .addMappings(mapper -> mapper.skip(Appointment::setId));
 
     // Map updatedAppointment fields to existingAppointment
