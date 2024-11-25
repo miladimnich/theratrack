@@ -1,5 +1,8 @@
 package org.dci.theratrack.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,8 +39,8 @@ public class Appointment {
   private Long id;
 
   @NotNull(message = "Date and time cannot be null")
-  @Column(nullable = false)
-  private String dateTime;
+  @Column(nullable = false, name = "date_time")
+  private LocalDateTime dateTime;
 
   @NotNull(message = "Duration cannot be null")
   @Min(1)  // Session duration must be positive
@@ -49,19 +52,28 @@ public class Appointment {
   private AppointmentStatus status;
 
   @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonManagedReference // Avoid infinite recursion during serialization
   private List<Treatment> treatments;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "therapist_id", nullable = false)
+  @JsonIgnore
   private Therapist therapist;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "patient_id", nullable = false)
+  @JsonIgnore
   private Patient patient;
 
-  @FutureOrPresent(message = "Appointment date must be in the future or present")
-  @Column(nullable = false)
-  private LocalDateTime appointmentDate;
+  @Column(length = 2000)
+  private String additionalNotes;
+
+  public void setNotes(String notes) {
+    this.additionalNotes = notes;
+  }
+
+
+
 
 
 }

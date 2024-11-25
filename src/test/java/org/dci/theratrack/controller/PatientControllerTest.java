@@ -7,6 +7,7 @@ import org.dci.theratrack.exceptions.GlobalExceptionHandler;
 import org.dci.theratrack.exceptions.ResourceNotFoundException;
 import org.dci.theratrack.repository.PatientRepository;
 import org.dci.theratrack.request.PatientRequest;
+import org.dci.theratrack.service.AppointmentService;
 import org.dci.theratrack.service.PatientService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,9 @@ class PatientControllerTest {
 
   @MockBean
   private PatientRepository patientRepository;
+
+  @MockBean
+  private AppointmentService appointmentService;
 
   @BeforeEach
   void setup() {

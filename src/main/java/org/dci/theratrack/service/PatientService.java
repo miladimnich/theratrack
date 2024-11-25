@@ -1,13 +1,17 @@
 package org.dci.theratrack.service;
 
+import java.util.stream.Collectors;
+import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Appointment;
 import org.dci.theratrack.entity.Patient;
 import org.dci.theratrack.entity.User;
 import org.dci.theratrack.enums.UserRole;
 import org.dci.theratrack.exceptions.InvalidRequestException;
 import org.dci.theratrack.exceptions.ResourceNotFoundException;
+import org.dci.theratrack.repository.AppointmentRepository;
 import org.dci.theratrack.repository.PatientRepository;
 import org.dci.theratrack.request.PatientRequest;
+import org.dci.theratrack.request.TherapySessionHistoryRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,9 @@ public class PatientService {
 
   @Autowired
   private ModelMapper modelMapper;
+
+  @Autowired
+  private AppointmentRepository appointmentRepository;
 
 
   /**
@@ -64,11 +71,11 @@ public class PatientService {
   /**
    * Updates an existing patient.
    *
-   * @param id the ID of the patient to update
+   * @param id             the ID of the patient to update
    * @param updatedPatient the updated patient data
    * @return the updated patient
    * @throws ResourceNotFoundException if the patient is not found
-   * @throws InvalidRequestException if the updated patient is null
+   * @throws InvalidRequestException   if the updated patient is null
    */
   public Patient updatePatient(Long id, Patient updatedPatient) {
     if (updatedPatient == null) {
@@ -78,7 +85,8 @@ public class PatientService {
     Patient existingPatient = patientRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
 
-    modelMapper.typeMap(Patient.class, Patient.class).addMappings(mapper -> mapper.skip(Patient::setId));
+    modelMapper.typeMap(Patient.class, Patient.class)
+        .addMappings(mapper -> mapper.skip(Patient::setId));
     modelMapper.map(updatedPatient, existingPatient);
 
     return patientRepository.save(existingPatient);
@@ -96,4 +104,14 @@ public class PatientService {
     }
     patientRepository.deleteById(id);
   }
+
+
+  public List<TherapySessionHistoryRequest> getTherapySessionHistory(Long patientId) {
+    List<Appointment> appointments = appointmentRepository.getAppointmentsByPatientId(patientId);
+
+    return appointments.stream()
+        .map(appointment -> modelMapper.map(appointment, TherapySessionHistoryRequest.class))
+        .collect(Collectors.toList());
+  }
+
 }
