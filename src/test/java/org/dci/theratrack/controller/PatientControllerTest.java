@@ -10,6 +10,7 @@ import org.dci.theratrack.enums.AppointmentStatus;
 import org.dci.theratrack.repository.AppointmentRepository;
 import org.dci.theratrack.repository.PatientRepository;
 import org.dci.theratrack.request.PatientRequest;
+import org.dci.theratrack.service.AppointmentService;
 import org.dci.theratrack.service.PatientService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -40,6 +41,9 @@ public class PatientControllerTest {
 
   @MockBean
   private PatientRepository patientRepository;
+
+  @MockBean
+  private AppointmentService appointmentService;
 
   @BeforeEach
   void setup() {
@@ -139,52 +143,5 @@ public class PatientControllerTest {
 
     verify(patientService, times(1)).createPatient(any(PatientRequest.class));
   }
-
-  @Disabled
-  @Test
-  void testGetPatientTherapyHistory_found() throws Exception {
-    Patient patient = new Patient();
-    patient.setId(1L);
-    patient.setName("John");
-    patient.setSurname("Doe");
-
-    Appointment appointment = new Appointment();
-    appointment.setId(1L);
-    appointment.setPatient(patient);
-    appointment.setSessionDuration(60);
-    appointment.setStatus(AppointmentStatus.COMPLETED);
-    //appointment.setDateTime(LocalDateTime.now());
-    appointment.setTherapist(new Therapist());
-
-    //TODO
-    // Mock the service layer to return a list with the mock appointment
-    //when(patientService.getPatientTherapyHistory(1L)).thenReturn(List.of(appointment));
-
-     mockMvc.perform(
-            get("/api/patients/1/therapy-history"))
-        .andExpect(status().isOk())  // Expect HTTP status 200 OK
-        .andExpect(jsonPath("$[0].id").value(1))  // Check if the ID is 1
-        .andExpect(jsonPath("$[0].patient.id").value(1))  // Check the patient ID
-        .andExpect(jsonPath("$[0].status").value("COMPLETED"));  // Check the status
-
-    //TODO
-    // Then: Verify the service was called exactly once with the correct patient ID
-    //verify(patientService, times(1)).getPatientTherapyHistory(1L);
-  }
-
-  @Disabled
-  @Test
-  void testGetPatientTherapyHistory_notFound() throws Exception {
-    //when(patientService.getPatientTherapyHistory(1L)).thenReturn(List.of());
-
-    mockMvc.perform(get("/api/patients/1/therapy-history"))
-        .andExpect(status().isNotFound());  // Expect HTTP status 404
-
-    //TODO implement getPatientTherapyHistory method. Maybe it make sense to implement it for another service
-    // Then: Verify the service was called exactly once with the correct patient ID
-    //verify(patientService, times(1)).getPatientTherapyHistory(1L);
-  }
-
-
 }
 
