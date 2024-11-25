@@ -1,9 +1,8 @@
 package org.dci.theratrack.controller;
 
+import jakarta.validation.Valid;
 import org.dci.theratrack.entity.Patient;
 import org.dci.theratrack.request.PatientRequest;
-import org.dci.theratrack.request.TherapySessionHistoryRequest;
-import org.dci.theratrack.service.AppointmentService;
 import org.dci.theratrack.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +17,8 @@ public class PatientController {
   @Autowired
   private PatientService patientService;
 
-  @Autowired
-  private AppointmentService appointmentService;
   @PostMapping
-  public ResponseEntity<Patient> createPatient(@RequestBody PatientRequest request) {
+  public ResponseEntity<Patient> createPatient(@RequestBody @Valid PatientRequest request) {
     return ResponseEntity.ok(patientService.createPatient(request));
   }
 
@@ -37,8 +34,7 @@ public class PatientController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Patient> updatePatient(@PathVariable Long id,
-      @RequestBody Patient updatedPatient) {
+  public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody @Valid Patient updatedPatient) {
     return ResponseEntity.ok(patientService.updatePatient(id, updatedPatient));
   }
 
@@ -47,13 +43,4 @@ public class PatientController {
     patientService.deletePatient(id);
     return ResponseEntity.noContent().build();
   }
-
-
-  @GetMapping("/history/{patientId}")
-  public ResponseEntity<List<TherapySessionHistoryRequest>> getTherapySessionHistory(@PathVariable Long patientId) {
-    List<TherapySessionHistoryRequest> history = patientService.getTherapySessionHistory(patientId);
-    return ResponseEntity.ok(history);
-  }
 }
-
-
