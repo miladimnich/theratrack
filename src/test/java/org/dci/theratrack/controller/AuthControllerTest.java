@@ -1,6 +1,5 @@
 package org.dci.theratrack.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dci.theratrack.config.TestSecurityConfig;
 import org.dci.theratrack.service.AuthService;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ContextConfiguration(classes = {TestSecurityConfig.class, AuthController.class})
 @WebMvcTest(AuthController.class)
-public class AuthControllerTest {
+class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -27,7 +26,7 @@ public class AuthControllerTest {
     private AuthService authService;
 
     @Test
-    public void testLogin_Success() throws Exception {
+    void testLogin_Success() throws Exception {
         // Mock AuthService behavior
         when(authService.authenticate(anyString(), anyString())).thenReturn("mock-jwt-token");
 
@@ -40,7 +39,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void testLogin_InvalidCredentials() throws Exception {
+    void testLogin_InvalidCredentials() throws Exception {
         // Mock AuthService behavior for invalid credentials
         Mockito.doThrow(new RuntimeException("Invalid credentials"))
                 .when(authService).authenticate(anyString(), anyString());
