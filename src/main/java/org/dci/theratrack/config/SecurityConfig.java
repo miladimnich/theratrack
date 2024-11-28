@@ -20,6 +20,7 @@ public class SecurityConfig {
             .requestMatchers("/api/patients/**").hasRole(UserRole.ADMIN.name())
             .requestMatchers("/api/therapists/**").hasRole(UserRole.ADMIN.name())
             .requestMatchers("/api/users/**").hasRole(UserRole.ADMIN.name())
+            .requestMatchers("/api/dashboard/**").authenticated()
             .anyRequest().authenticated()
         ).addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
             .httpBasic(httpBasic -> {});

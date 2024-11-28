@@ -15,8 +15,10 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Allow all endpoints
                         .allowedOrigins("http://localhost:3000") // Frontend origin
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowCredentials(true); // Allow cookies and authorization headers
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*") // Allow all headers
+                        .allowCredentials(true) // Allow cookies/authorization headers
+                        .maxAge(3600); // Cache preflight response for 1 hour
             }
         };
     }
