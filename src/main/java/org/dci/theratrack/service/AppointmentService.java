@@ -49,6 +49,11 @@ public class AppointmentService {
       throw new InvalidRequestException("Appointment details cannot be null.");
     }
 
+    if (request.getAppointment().getAdditionalNotes() != null) {
+      appointment.setAdditionalNotes(request.getAppointment().getAdditionalNotes());
+    }
+
+
     Patient patient = patientRepository.findById(request.getPatient().getId())
         .orElseThrow(() -> new ResourceNotFoundException(
             "Patient not found with ID: " + request.getPatient().getId()));
@@ -172,17 +177,5 @@ public class AppointmentService {
     return treatmentRepository.save(treatmentRequest);
   }
 
-  public Appointment updateAppointmentNotes(Long appointmentId, String notes) {
-    if (appointmentId == null || notes == null) {
-      throw new InvalidRequestException("Appointment ID and notes cannot be null.");
-    }
 
-    Appointment appointment = appointmentRepository.findById(appointmentId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Appointment not found with ID: " + appointmentId));
-
-    appointment.setAdditionalNotes(notes);
-
-    return appointmentRepository.save(appointment);
-  }
 }
