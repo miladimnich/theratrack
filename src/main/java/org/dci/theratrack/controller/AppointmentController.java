@@ -11,6 +11,7 @@ import org.dci.theratrack.service.PatientService;
 import org.dci.theratrack.service.TreatmentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +40,9 @@ public class AppointmentController {
 
   @PostMapping
   public ResponseEntity<Appointment> createAppointment(@RequestBody AppointmentRequest request) {
-    System.out.println("Received request: " + request);
-    return ResponseEntity.ok(appointmentService.createAppointment(request));
+    Appointment createdAppointment = appointmentService.createAppointment(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
+
   }
 
   @GetMapping("/{id}")
@@ -90,20 +92,5 @@ public class AppointmentController {
     return ResponseEntity.ok(savedTreatment);
   }
 
-
-  @PutMapping("/{appointment_id}/notes")
-  public ResponseEntity<Appointment> updateAppointmentNotes(
-      @PathVariable("appointment_id") Long appointmentId,
-      @RequestBody Map<String, String> requestBody) {
-
-    String updatedNotes = requestBody.get("notes");
-    if (updatedNotes == null || updatedNotes.trim().isEmpty()) {
-      return ResponseEntity.badRequest().body(null);
-    }
-
-    Appointment updatedAppointment = appointmentService.updateAppointmentNotes(appointmentId,
-        updatedNotes);
-    return ResponseEntity.ok(updatedAppointment);
-  }
 
 }
