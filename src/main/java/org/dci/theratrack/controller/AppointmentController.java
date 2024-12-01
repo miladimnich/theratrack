@@ -81,16 +81,7 @@ public class AppointmentController {
     return ResponseEntity.noContent().build();
   }
 
-  @PutMapping("/{appointmentId}/treatments")
-  public ResponseEntity<Treatment> addTreatmentDetail(
-      @PathVariable Long appointmentId,
-      @RequestBody Treatment treatmentRequest) {
 
-    Treatment savedTreatment = appointmentService.addTreatmentToAppointment(appointmentId,
-        treatmentRequest);
-
-    return ResponseEntity.ok(savedTreatment);
-  }
 
 
 }
