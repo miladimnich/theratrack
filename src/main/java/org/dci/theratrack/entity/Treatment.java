@@ -59,12 +59,77 @@ public class Treatment {
   private Diagnosis diagnosis;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "appointment_id", nullable = false) // Foreign key to appointments table
+  @JoinColumn(name = "appointment_id")
   @JsonBackReference // Prevents recursion from the other side
   private Appointment appointment;
 
   @Column(length = 2000)
   private String notes;
+
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public Integer getDuration() {
+    return duration;
+  }
+
+  public void setDuration(Integer duration) {
+    this.duration = duration;
+  }
+
+  public DifficultyLevel getDifficultyLevel() {
+    return difficultyLevel;
+  }
+
+  public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
+    this.difficultyLevel = difficultyLevel;
+  }
+
+  public TreatmentStatus getTreatmentStatus() {
+    return treatmentStatus;
+  }
+
+  public void setTreatmentStatus(TreatmentStatus treatmentStatus) {
+    this.treatmentStatus = treatmentStatus;
+  }
+
+  public Diagnosis getDiagnosis() {
+    return diagnosis;
+  }
+
+  public void setDiagnosis(Diagnosis diagnosis) {
+    this.diagnosis = diagnosis;
+  }
+
+  public Appointment getAppointment() {
+    return appointment;
+  }
+
+  public void setAppointment(Appointment appointment) {
+    this.appointment = appointment;
+  }
 
   public String getNotes() {
     return notes;
