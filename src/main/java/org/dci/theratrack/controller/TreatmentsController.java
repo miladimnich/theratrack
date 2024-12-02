@@ -3,6 +3,7 @@ package org.dci.theratrack.controller;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.dci.theratrack.entity.Treatment;
+import org.dci.theratrack.request.TreatmentRequest;
 import org.dci.theratrack.service.TreatmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class TreatmentsController {
 
 
   @PostMapping
-  public ResponseEntity<Treatment> addTreatment(@RequestBody Treatment treatmentRequest) {
+  public ResponseEntity<Treatment> addTreatment(@RequestBody TreatmentRequest treatmentRequest) {
     Treatment createdTreatment = treatmentService.addTreatment(treatmentRequest);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdTreatment);
 
