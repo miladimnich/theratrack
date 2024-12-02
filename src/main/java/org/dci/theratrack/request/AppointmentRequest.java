@@ -19,7 +19,7 @@ public class AppointmentRequest {
   @Valid
   private Therapist therapist;
 
- 
+
   @Valid
   private TreatmentRequest treatment;
 
