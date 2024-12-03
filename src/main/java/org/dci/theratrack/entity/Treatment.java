@@ -67,6 +67,7 @@ public class Treatment {
   private String notes;
 
 
+
   public Long getId() {
     return id;
   }
