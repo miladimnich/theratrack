@@ -21,7 +21,6 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -69,19 +68,12 @@ public class Appointment {
   @Column(length = 2000)
   private String additionalNotes;
 
-  public List<Treatment> getTreatments() {
-    return treatments;
+  public void setNotes(String notes) {
+    this.additionalNotes = notes;
   }
 
-  public void setTreatments(List<Treatment> treatments) {
-    this.treatments = treatments;
-  }
 
-  public String getAdditionalNotes() {
-    return additionalNotes;
-  }
 
-  public void setAdditionalNotes(String additionalNotes) {
-    this.additionalNotes = additionalNotes;
-  }
+
+
 }
